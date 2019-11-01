@@ -10,6 +10,13 @@ namespace waveletTransformer
         public int Width { get; private set; }
         public int Height { get; private set; }
 
+        public enum ColorComponent 
+        {
+            Red,
+            Green,
+            Blue
+        }
+
         private DoublePixel[,] _pixels; 
 
         public DoubleImage(int width, int height) 
@@ -43,6 +50,73 @@ namespace waveletTransformer
         public void SetPixel(int i, int j, double r, double g, double b) 
         {
             _pixels[i, j].SetColor(r, g, b);
+        }
+
+        public double[,] GetColorComponent(ColorComponent component) 
+        {
+            double[,] colorComponent = new double[this.Height, this.Width];
+            switch (component)
+            {
+                case ColorComponent.Red:
+                    for (int i = 0; i < this.Height; i++)
+                        for (int j = 0; j < this.Width; j++)
+                            colorComponent[i, j] = this._pixels[i, j].Red;
+                    break;
+
+                case ColorComponent.Green:
+                    for (int i = 0; i < this.Height; i++)
+                        for (int j = 0; j < this.Width; j++)
+                            colorComponent[i, j] = this._pixels[i, j].Green;
+                    break;
+
+                case ColorComponent.Blue:
+                    for (int i = 0; i < this.Height; i++)
+                        for (int j = 0; j < this.Width; j++)
+                            colorComponent[i, j] = this._pixels[i, j].Blue;
+                    break;
+            }
+            return colorComponent;
+        }
+
+        public DoubleImage UpdateColorComponent(ColorComponent component, double[,] colorComponent)
+        {
+            DoubleImage updatedImage = this;
+            switch (component)
+            {
+                case ColorComponent.Red:
+                    for (int i = 0; i < this.Height; i++)
+                    {
+                        for (int j = 0; j < this.Width; j++)
+                        {
+                            DoublePixel initialPixel = this.GetPixel(i, j);
+                            updatedImage.SetPixel(i, j, colorComponent[i, j], initialPixel.Green, initialPixel.Blue);
+                        }
+                    }
+                    break;
+
+                case ColorComponent.Green:
+                    for (int i = 0; i < this.Height; i++)
+                    {
+                        for (int j = 0; j < this.Width; j++)
+                        {
+                            DoublePixel initialPixel = this.GetPixel(i, j);
+                            updatedImage.SetPixel(i, j, initialPixel.Red, colorComponent[i, j], initialPixel.Blue);
+                        }
+                    }
+                    break;
+
+                case ColorComponent.Blue:
+                    for (int i = 0; i < this.Height; i++)
+                    {
+                        for (int j = 0; j < this.Width; j++)
+                        {
+                            DoublePixel initialPixel = this.GetPixel(i, j);
+                            updatedImage.SetPixel(i, j, initialPixel.Red, initialPixel.Green, colorComponent[i, j]);
+                        }
+                    }
+                    break;
+            }
+            return updatedImage;
         }
 
         public Bitmap ToBitmap(double colorMult, double colorShift) 
