@@ -8,7 +8,11 @@ namespace DigitalWatermarking
     {
         static void Main(string[] args)
         {
-
+            using (Bitmap image = new Bitmap("QRcode.png")) {
+                DoubleImage dImage = new DoubleImage(image);
+                Watermark watermark = new Watermark(dImage);
+            }
+            Console.Read();
         }
 
         private static void PrintMatrix(double[,] matrix)

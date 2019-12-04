@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace waveletTransformer
+namespace DigitalWatermarking
 {
     public class DoublePixel
     {
