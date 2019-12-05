@@ -8,11 +8,41 @@ namespace DigitalWatermarking
     {
         static void Main(string[] args)
         {
-            using (Bitmap image = new Bitmap("QRcode.png")) {
-                DoubleImage dImage = new DoubleImage(image);
-                Watermark watermark = new Watermark(dImage);
+            /* using (Bitmap image = new Bitmap("QRcode.png")) {
+                 DoubleImage dImage = new DoubleImage(image);
+                 Watermark watermark = new Watermark(dImage);
+             }
+             Console.Read();*/
+            double[,] matrix;
+            using (StreamReader str = new StreamReader("test.txt"))
+            {
+                string parameters = str.ReadLine();
+
+                string[] parameterNumbers = parameters.Split(' ');
+                int height = Convert.ToInt32(parameterNumbers[0]);
+                int width = Convert.ToInt32(parameterNumbers[1]);
+
+                matrix = new double[height, width];
+                for (int i = 0; i < height; i++)
+                {
+                    var line = str.ReadLine();
+                    string[] numbers = line.Split(' ');
+                    for (int j = 0; j < numbers.Length; j++)
+                        matrix[i, j] = Convert.ToInt32(numbers[j]);
+                }
+
+                PrintMatrix(matrix);
+                Console.WriteLine();
+               
+                var transfromedMatrix = Wavelet.Transform(matrix, 3);
+                PrintMatrix(transfromedMatrix);
+                Console.WriteLine();
+
+                var initialMatrix = Wavelet.Untransfrom(transfromedMatrix, 3);
+                PrintMatrix(initialMatrix);
+                Console.WriteLine();
             }
-            Console.Read();
+            Console.ReadKey();
         }
 
         private static void PrintMatrix(double[,] matrix)

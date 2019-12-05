@@ -15,7 +15,11 @@ namespace DigitalWatermarking
             get { return _bits[index]; }
             set { _bits[index] = value; }
         }
-
+        public Watermark(int length)
+        {
+            Length = length;
+            _bits = new int[length];
+        }
         public Watermark(DoubleImage image) {
             _bits = new int[image.Width * image.Height];
 

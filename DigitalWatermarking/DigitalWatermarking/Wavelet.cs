@@ -31,6 +31,24 @@ namespace DigitalWatermarking
             return resultMatrix;
         }
 
+        public static double[,] Untransfrom(double[,] matrix, int decompositionLevel)
+        {
+            int width = matrix.GetLength(1);
+            int height = matrix.GetLength(0);
+
+            CheckDecompositionLevel(decompositionLevel, width, height);
+
+            double[,] resultMatrix = matrix;
+            for (int i = decompositionLevel; i >= 1; i--)
+            {
+                int variableWidth = width / i;
+                int variableHeight = height / i;
+                resultMatrix = Haar.Untransform(resultMatrix, variableWidth, variableHeight);
+            }
+
+            return resultMatrix;
+        }
+
         public static double[,] GetCoefficient(double[,] matrix, Coefficients typeOfCoef, int decompositionLevel)
         {
             int width = matrix.GetLength(1);
@@ -50,6 +68,27 @@ namespace DigitalWatermarking
             return resultCoef;
         }
 
+        public static double[,] SetCoefficient(double[,] matrix, Coefficients typeOfCoef, int decompositionLevel, double[,] coefficients)
+        {
+            int width = matrix.GetLength(1);
+            int height = matrix.GetLength(0);
+
+            CheckDecompositionLevel(decompositionLevel, width, height);
+
+            int decompositionCoef = Convert.ToInt32(Math.Pow(2, decompositionLevel));
+            Range range = GetRange(typeOfCoef, decompositionLevel, width, height);
+
+            int coefWidth = width / decompositionCoef;
+            int coefHeight = height / decompositionCoef;
+
+            for (int i = 0; i < coefHeight; i++)
+            {
+                for (int j = 0; j < coefWidth; j++)
+                    matrix[i + range.Height.StartIndex, j + range.Width.StartIndex] = coefficients[i,j];
+            }
+            return matrix;
+        }
+
         private static Range GetRange(Coefficients typeOfCoef, int decompositionLevel, int width, int height)
         {
             int decompositionCoef = Convert.ToInt32(Math.Pow(2, decompositionLevel));
@@ -66,30 +105,30 @@ namespace DigitalWatermarking
 
                 case Coefficients.Horizontal:
                     range.Width.StartIndex = width / decompositionCoef;
-                    range.Width.EndIndex = 2 * width / decompositionCoef;
+                    //range.Width.EndIndex = 2 * width / decompositionCoef;
                     range.Height.StartIndex = 0;
-                    range.Height.EndIndex = height / decompositionCoef;
+                    //range.Height.EndIndex = height / decompositionCoef;
                     break;
 
                 case Coefficients.Vertical:
                     range.Width.StartIndex = 0;
-                    range.Width.EndIndex = width / decompositionCoef;
+                    //range.Width.EndIndex = width / decompositionCoef;
                     range.Height.StartIndex = height / decompositionCoef;
-                    range.Height.EndIndex = 2 * height / decompositionCoef;
+                    //range.Height.EndIndex = 2 * height / decompositionCoef;
                     break;
 
                 case Coefficients.Diagonal:
                     range.Width.StartIndex = width / decompositionCoef;
-                    range.Width.EndIndex = 2 * width / decompositionCoef;
+                    //range.Width.EndIndex = 2 * width / decompositionCoef;
                     range.Height.StartIndex = height / decompositionCoef;
-                    range.Height.EndIndex = 2 * height / decompositionCoef;
+                    //range.Height.EndIndex = 2 * height / decompositionCoef;
                     break;
 
                 default:
                     range.Width.StartIndex = 0;
-                    range.Width.EndIndex = width;
+                    //range.Width.EndIndex = width;
                     range.Height.StartIndex = 0;
-                    range.Height.EndIndex = height;
+                    //range.Height.EndIndex = height;
                     break;
             }
 

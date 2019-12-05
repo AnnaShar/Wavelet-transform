@@ -4,9 +4,9 @@ using System.Text;
 
 namespace DigitalWatermarking
 {
-    class Treshold
+    public static class Treshold
     {
-        public double GetTreshold(double[,] horizontal, double[,] vertical, double[,] diagonal)
+        public static double GetTreshold(double[,] horizontal, double[,] vertical, double[,] diagonal)
         {
             double horMax = MaxMatrix(horizontal);
             double vertMax = MaxMatrix(vertical);
@@ -17,7 +17,7 @@ namespace DigitalWatermarking
             return treshold;
         }
 
-        public double GetTreshold(double[,] horizontal, double[,] vertical, double[,] diagonal, double[,] approximation)
+        public static double GetTreshold(double[,] horizontal, double[,] vertical, double[,] diagonal, double[,] approximation)
         {
             double horMax = MaxMatrix(horizontal);
             double vertMax = MaxMatrix(vertical);
@@ -28,7 +28,7 @@ namespace DigitalWatermarking
             double treshold = Math.Pow(2, (Math.Log(max, 2) - 1));
             return treshold;
         }
-        private double MaxMatrix(double[,] matrix)
+        private static double MaxMatrix(double[,] matrix)
         {
             double max = matrix[0, 0];
             for (int i = 0; i < matrix.GetLength(0); i++)
@@ -42,7 +42,7 @@ namespace DigitalWatermarking
             }
             return max;
         }
-        private double MaxArray(double[] array)
+        private static double MaxArray(double[] array)
         {
             double max = array[0];
             for (int i = 0; i < array.Length; i++)

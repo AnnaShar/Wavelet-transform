@@ -63,6 +63,49 @@ namespace DigitalWatermarking
             return resultMatrix;
         }
 
+        public static double[,] Untransform(double[,] matrix, int variableWidth, int variableHeight)
+        {
+            double[,] intermediateMatrix = new double[variableHeight, variableWidth];
+            double[,] resultMatrix = new double[variableHeight, variableWidth];
+
+            //Column transformation
+            for (int i = 0; i < variableWidth; i++)
+            {
+                for (int j = 0; j < variableHeight / 2; j++)
+                {
+                    double transformedNumberLow = matrix[j, i];
+                    double transformedNumberHigh = matrix[variableHeight / 2 + j, i];
+
+                    double initialNumberLow = (transformedNumberLow + transformedNumberHigh);// * c_low[0];
+                    double initialNumberHigh = (transformedNumberLow - transformedNumberHigh);// * c_high[0];
+
+                    intermediateMatrix[j * 2 , i] = initialNumberLow; //Low frequency component
+                    intermediateMatrix[j * 2 + 1, i] = initialNumberHigh; //High frequency component
+                }
+            }
+
+            //Rows transformation
+            for (int i = 0; i < variableHeight; i++)
+            {
+                for (int j = 0; j < variableWidth / 2; j++)
+                {
+                    double transformedNumberLow = intermediateMatrix[i, j];
+                    double transformedNumberHigh = intermediateMatrix[i, variableWidth / 2 + j];
+
+                    double initialNumberLow = (transformedNumberLow + transformedNumberHigh);// * c_low[0];
+                    double initialNumberHigh = (transformedNumberLow - transformedNumberHigh);// * c_high[0];
+
+                    resultMatrix[i, j * 2] = initialNumberLow; //Low frequency component
+                    resultMatrix[i, j * 2 + 1] = initialNumberHigh; //High frequency component
+                }
+            }
+            int actualWidth = matrix.GetLength(1);
+            if (variableWidth != actualWidth)
+                resultMatrix = FillRestMatrix(matrix, resultMatrix, variableWidth, variableHeight);
+
+            return resultMatrix;
+        }
+
         private static double[,] FillRestMatrix(double[,] originalMatrix, double[,] transfromMatrix, int variableWidth, int variableHeight)
         {
             double[,] resultMatrix = new double[originalMatrix.GetLength(0), originalMatrix.GetLength(1)];
