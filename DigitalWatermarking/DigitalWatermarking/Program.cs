@@ -8,7 +8,7 @@ namespace DigitalWatermarking
     {
         static void Main(string[] args)
         {
-            var keyWord = "rama_black";
+            var keyWord = "mix100";
             var inPicture = keyWord+ ".jpg";
             var changedPicture = keyWord + "_changed.jpg";
             var qr = "QRcode_small.png";
@@ -16,7 +16,7 @@ namespace DigitalWatermarking
 
 
 
-            /*Watermark watermark;
+            Watermark watermark;
             DoubleImage image;
             using (Bitmap watermarkBitmap = new Bitmap(qr))
             {
@@ -49,8 +49,8 @@ namespace DigitalWatermarking
             JRKimAlgorithm algorithm1 = new JRKimAlgorithm();
             DoubleImage watermark1 = algorithm1.KIMextract(initialImage, changedImage, 84, 84);
             Bitmap bitResult1 = watermark1.ToBitmap(1, 0);
-            bitResult1.Save(qr_extracted);*/
-
+            bitResult1.Save(qr_extracted);
+            
             using (Bitmap imageBitmap = new Bitmap(inPicture))
             {
                 Console.WriteLine(getDominantColor(imageBitmap));
@@ -74,8 +74,6 @@ namespace DigitalWatermarking
 
         public static Color getDominantColor(Bitmap bmp)
         {
-
-            //Used for tally
             int r = 0;
             int g = 0;
             int b = 0;

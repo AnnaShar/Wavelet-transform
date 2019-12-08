@@ -38,6 +38,31 @@ namespace DigitalWatermarking
             }
         }
 
+        public Watermark Append(Watermark addWatermark, int p)
+        {
+            Watermark newWatermark = this;
+            for (int i = p; i < this.Length; i++)
+            {
+                newWatermark[i] = addWatermark[i-p];
+            }
+            return newWatermark;
+        }
+       
+        /*public Watermark Append(Watermark addWatermark, int p)
+        {
+            Watermark newWatermark = new Watermark(this.Length + addWatermark.Length);
+            for (int i=0; i<this.Length; i++)
+            {
+                newWatermark[i] = this[i];
+            }
+
+            for (int i=0; i<addWatermark.Length; i++)
+            {
+                newWatermark[this.Length + 1] = addWatermark[i];
+            }
+            return newWatermark;
+        }*/
+
         public DoubleImage ToDoubleImage(int width, int height)
         {
             DoubleImage image = new DoubleImage(width, height);

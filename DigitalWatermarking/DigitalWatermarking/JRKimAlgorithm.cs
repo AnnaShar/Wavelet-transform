@@ -10,13 +10,24 @@ namespace DigitalWatermarking
         private double coef3Level = 0.1;
         private double coef2Level = 0.2;
         private double coef1Level = 0.4;
-        private DoubleImage.ColorComponent mainColorComponent = DoubleImage.ColorComponent.Red;
-
+        //private DoubleImage.ColorComponent mainColorComponent = DoubleImage.ColorComponent.Red;
+        private int p = 0;
 
         public DoubleImage KIMembed(DoubleImage image, Watermark initialWatermark)
+        {
+            DoubleImage result = KIMembedComponent(image, initialWatermark, DoubleImage.ColorComponent.Blue);
+            /*if (p< initialWatermark.Length)
+                result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Red);
+            if (p < initialWatermark.Length)
+                result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Green);
+            p = 0;*/
+            return result;
+        }
+
+        private DoubleImage KIMembedComponent(DoubleImage image, Watermark initialWatermark, DoubleImage.ColorComponent colorComponent)
         { 
             // Get blue component from image
-            double[,] blueComponent = image.GetColorComponent(mainColorComponent); 
+            double[,] blueComponent = image.GetColorComponent(colorComponent); 
 
             // Transfrom blue component with wavelet transformation
             double[,] waveletTransformedComponent = Wavelet.Transform(blueComponent, 3);
@@ -43,7 +54,7 @@ namespace DigitalWatermarking
             Watermark watermark = TransformWatermark(initialWatermark);
 
             // Embed watermark into coefficients
-            int p = 0;
+            //int p = 0;
             p = EmbedInCoef(coefApprox, ref approx3, threshold3, watermark, p);
             p = EmbedInCoef(coef3Level, ref detailHor3, threshold3, watermark, p);
             p = EmbedInCoef(coef3Level, ref detailVert3, threshold3, watermark, p);
@@ -56,6 +67,8 @@ namespace DigitalWatermarking
             p = EmbedInCoef(coef1Level, ref detailHor1, threshold1, watermark, p);
             p = EmbedInCoef(coef1Level, ref detailVert1, threshold1, watermark, p);
             p = EmbedInCoef(coef1Level, ref detailDiag1, threshold1, watermark, p);
+
+            Console.WriteLine("watermark length {0}", watermark.Length);
             Console.WriteLine("p {0}", p);
 
             // Restore blue component from coefficients
@@ -76,14 +89,13 @@ namespace DigitalWatermarking
             double[,] untrasformedComponent = Wavelet.Untransfrom(componentWithWatermark, 3);
 
             // Embed blue component into initial image
-            image = image.UpdateColorComponent(mainColorComponent, untrasformedComponent); 
+            image = image.UpdateColorComponent(colorComponent, untrasformedComponent); 
 
             return image;
         }
 
         private int EmbedInCoef(double constCoefficient,ref double[,] coefficients,  double treshold, Watermark watermark, int p)
         {
-            Console.WriteLine("watermark length {0}", watermark.Length);
             for (int i = 0; i < coefficients.GetLength(0); i++)
             {
                 if (p >= watermark.Length)
@@ -105,8 +117,18 @@ namespace DigitalWatermarking
 
         public DoubleImage KIMextract(DoubleImage initialImage, DoubleImage changedImage, int widthWatermark, int heigthWatermark)
         {
+            Watermark watermark = KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Blue);
+            /*if (p < widthWatermark * heigthWatermark)
+                watermark = watermark.Append(KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Red), p);
+            if (p < widthWatermark * heigthWatermark)
+                watermark = watermark.Append(KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Green), p);
+            p = 0;*/
+            return watermark.ToDoubleImage(widthWatermark, heigthWatermark);
+        }
+        private Watermark KIMextractComponent(DoubleImage initialImage, DoubleImage changedImage, int widthWatermark, int heigthWatermark, DoubleImage.ColorComponent colorComponent)
+        {
             // Get blue component from changed image
-            double[,] blueComponentChanged = changedImage.GetColorComponent(mainColorComponent); 
+            double[,] blueComponentChanged = changedImage.GetColorComponent(colorComponent); 
 
             // Transfrom blue component of changed image with wavelet transformation
             double[,] waveletTransformedChangedComponent = Wavelet.Transform(blueComponentChanged, 3);
@@ -127,7 +149,7 @@ namespace DigitalWatermarking
 
 
             // Get blue component from initial image
-            double[,] blueComponentInitial = initialImage.GetColorComponent(mainColorComponent); 
+            double[,] blueComponentInitial = initialImage.GetColorComponent(colorComponent); 
 
             // Transfrom blue component of initial image with wavelet transformation
             double[,] waveletTransformedComponent = Wavelet.Transform(blueComponentInitial, 3);
@@ -155,7 +177,7 @@ namespace DigitalWatermarking
             Watermark watermark = new Watermark(watermarkSize);
 
             // Extract watermark from coefficients
-            int p = 0;
+            //int p = 0;
             p = ExtractFromCoef(coefApprox, approx3Initial, approx3, threshold3, p, watermarkSize, ref watermark);
             p = ExtractFromCoef(coef3Level, detailHor3Initial, detailHor3, threshold3, p, watermarkSize, ref watermark);
             p = ExtractFromCoef(coef3Level, detailVert3Initial, detailVert3, threshold3, p, watermarkSize, ref watermark);
@@ -170,8 +192,9 @@ namespace DigitalWatermarking
             p = ExtractFromCoef(coef1Level, detailDiag1Initial, detailDiag1, threshold1, p, watermarkSize, ref watermark);
 
             watermark = UnTransformWatermark(watermark);
-            DoubleImage watermarkImage = watermark.ToDoubleImage(widthWatermark, heigthWatermark);
-            return watermarkImage;
+            return watermark;
+            //DoubleImage watermarkImage = watermark.ToDoubleImage(widthWatermark, heigthWatermark);
+            //return watermarkImage;
         }
 
         private int ExtractFromCoef(double constCoefficient, double[,] initialCoefficients, double[,] changedCoefficients, double treshold, int p, int watermarkSize, ref Watermark watermark)
