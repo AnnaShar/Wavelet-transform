@@ -21,7 +21,8 @@ namespace DigitalWatermarking
             _bits = new int[length];
         }
         public Watermark(DoubleImage image) {
-            _bits = new int[image.Width * image.Height];
+            Length = image.Width * image.Height;
+            _bits = new int[Length];
 
             for(int i=0; i<image.Height; i++)
             {
@@ -35,6 +36,25 @@ namespace DigitalWatermarking
                         _bits[i * image.Width + j] = 1;
                 }
             }
+        }
+
+        public DoubleImage ToDoubleImage(int width, int height)
+        {
+            DoubleImage image = new DoubleImage(width, height);
+            for (int i = 0; i < image.Height; i++)
+            {
+                for (int j = 0; j < image.Width; j++)
+                {
+                    //black
+                    if (this[i * image.Width + j] == 0)
+                        image.SetPixel(i, j, 0, 0, 0);
+
+                    //white
+                    if (this[i * image.Width + j] == 1)
+                        image.SetPixel(i, j, 255, 255, 255);
+                }
+            }
+            return image;
         }
     }
 }

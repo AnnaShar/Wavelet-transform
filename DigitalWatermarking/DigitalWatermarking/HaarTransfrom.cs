@@ -6,10 +6,12 @@ namespace DigitalWatermarking
 {
     public static class Haar
     {
-        //private static double[] c_low = new double[2] { 0.70710678118, 0.70710678118 };
-        //private static double[] c_high = new double[2] { 0.70710678118, -0.70710678118 };
-        private static double[] c_low = new double[2] { 0.5, 0.5 };
-        private static double[] c_high = new double[2] { 0.5, -0.5 };
+        private static double[] c_low = new double[2] { 0.70710678118, 0.70710678118 };
+        private static double[] c_high = new double[2] { 0.70710678118, -0.70710678118 };
+        //private static double[] c_low = new double[2] { 0.5, 0.5 };
+        //private static double[] c_high = new double[2] { 0.5, -0.5 };
+        //private static double[] c_low = new double[2] { 0.6, 0.6 };
+        //private static double[] c_high = new double[2] { 0.6, -0.6 };
         private static int waveletOrder = 2;
 
         public static double[,] Transform(double[,] matrix, int variableWidth, int variableHeight)
@@ -76,8 +78,8 @@ namespace DigitalWatermarking
                     double transformedNumberLow = matrix[j, i];
                     double transformedNumberHigh = matrix[variableHeight / 2 + j, i];
 
-                    double initialNumberLow = (transformedNumberLow + transformedNumberHigh);// * c_low[0];
-                    double initialNumberHigh = (transformedNumberLow - transformedNumberHigh);// * c_high[0];
+                    double initialNumberLow = (transformedNumberLow + transformedNumberHigh) * c_low[0];
+                    double initialNumberHigh = (transformedNumberLow - transformedNumberHigh) * c_high[0];
 
                     intermediateMatrix[j * 2 , i] = initialNumberLow; //Low frequency component
                     intermediateMatrix[j * 2 + 1, i] = initialNumberHigh; //High frequency component
@@ -92,8 +94,8 @@ namespace DigitalWatermarking
                     double transformedNumberLow = intermediateMatrix[i, j];
                     double transformedNumberHigh = intermediateMatrix[i, variableWidth / 2 + j];
 
-                    double initialNumberLow = (transformedNumberLow + transformedNumberHigh);// * c_low[0];
-                    double initialNumberHigh = (transformedNumberLow - transformedNumberHigh);// * c_high[0];
+                    double initialNumberLow = (transformedNumberLow + transformedNumberHigh) * c_low[0];
+                    double initialNumberHigh = (transformedNumberLow - transformedNumberHigh) * c_high[0];
 
                     resultMatrix[i, j * 2] = initialNumberLow; //Low frequency component
                     resultMatrix[i, j * 2 + 1] = initialNumberHigh; //High frequency component

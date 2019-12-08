@@ -33,11 +33,11 @@ namespace DigitalWatermarking
         {
             Width = BMImage.Width;
             Height = BMImage.Height;
-            _pixels = new DoublePixel[Width, Height];
-            for (int i = 0 ; i < Width; i++)
-                for (int j = 0; j < Height; j++)
+            _pixels = new DoublePixel[Height, Width];
+            for (int i = 0 ; i < Height; i++)
+                for (int j = 0; j < Width; j++)
                 {
-                    Color c = BMImage.GetPixel(i,j);
+                    Color c = BMImage.GetPixel(j, i);
                     _pixels[i, j] = new DoublePixel(c.R, c.G, c.B);
                 }
         }
@@ -125,7 +125,7 @@ namespace DigitalWatermarking
             for (int i = 0; i < BMImage.Width; i++)
                 for (int j = 0; j < BMImage.Height; j++)
                 {
-                    DoublePixel P = new DoublePixel(_pixels[i, j]);
+                    DoublePixel P = new DoublePixel(_pixels[j, i]);
                     P.Red = P.Red * colorMult + colorShift;
                     P.Green = P.Green * colorMult + colorShift;
                     P.Blue = P.Blue * colorMult + colorShift;
@@ -134,27 +134,5 @@ namespace DigitalWatermarking
             return BMImage;
         }
 
-        //TODO move to another class
-        public void Save(string filename)
-        {
-            if (File.Exists(filename))
-                File.Delete(filename);
-            FileStream fs = File.Create(filename);   
-            StreamWriter sw = new StreamWriter(fs);
-            sw.Write(Width);
-            sw.Write(" ");
-            sw.WriteLine(Height);
-            for (int i = 0; i < Height; i++)
-                for (int j = 0; j < Width; j++)
-                {
-                    sw.Write(_pixels[i,j].Red);
-                    sw.Write(" ");
-                    sw.Write(_pixels[i,j].Green);
-                    sw.Write(" ");
-                    sw.WriteLine(_pixels[i,j].Blue);
-                }
-            sw.Close();
-            fs.Close();
-        }
     }
 }

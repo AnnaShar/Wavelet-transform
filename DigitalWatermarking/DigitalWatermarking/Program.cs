@@ -8,40 +8,55 @@ namespace DigitalWatermarking
     {
         static void Main(string[] args)
         {
-            /* using (Bitmap image = new Bitmap("QRcode.png")) {
-                 DoubleImage dImage = new DoubleImage(image);
-                 Watermark watermark = new Watermark(dImage);
-             }
-             Console.Read();*/
-            double[,] matrix;
-            using (StreamReader str = new StreamReader("test.txt"))
+            var keyWord = "rama_black";
+            var inPicture = keyWord+ ".jpg";
+            var changedPicture = keyWord + "_changed.jpg";
+            var qr = "QRcode_small.png";
+            var qr_extracted = keyWord + "_QR.jpg";
+
+
+
+            /*Watermark watermark;
+            DoubleImage image;
+            using (Bitmap watermarkBitmap = new Bitmap(qr))
             {
-                string parameters = str.ReadLine();
-
-                string[] parameterNumbers = parameters.Split(' ');
-                int height = Convert.ToInt32(parameterNumbers[0]);
-                int width = Convert.ToInt32(parameterNumbers[1]);
-
-                matrix = new double[height, width];
-                for (int i = 0; i < height; i++)
-                {
-                    var line = str.ReadLine();
-                    string[] numbers = line.Split(' ');
-                    for (int j = 0; j < numbers.Length; j++)
-                        matrix[i, j] = Convert.ToInt32(numbers[j]);
-                }
-
-                PrintMatrix(matrix);
-                Console.WriteLine();
-               
-                var transfromedMatrix = Wavelet.Transform(matrix, 3);
-                PrintMatrix(transfromedMatrix);
-                Console.WriteLine();
-
-                var initialMatrix = Wavelet.Untransfrom(transfromedMatrix, 3);
-                PrintMatrix(initialMatrix);
-                Console.WriteLine();
+                DoubleImage dImage = new DoubleImage(watermarkBitmap);
+                watermark = new Watermark(dImage);
             }
+
+            using (Bitmap imageBitmap = new Bitmap(inPicture))
+            {
+                image = new DoubleImage(imageBitmap);
+            }
+
+            JRKimAlgorithm algorithm = new JRKimAlgorithm();
+            DoubleImage result = algorithm.KIMembed(image, watermark);
+            Bitmap bitResult = result.ToBitmap(1, 0);
+            bitResult.Save(changedPicture);
+
+            DoubleImage initialImage, changedImage;
+
+            using (Bitmap imageBitmap = new Bitmap(inPicture))
+            {
+                initialImage = new DoubleImage(imageBitmap);
+            }
+
+            using (Bitmap imageBitmap = new Bitmap(changedPicture))
+            {
+                changedImage = new DoubleImage(imageBitmap);
+            }
+
+            JRKimAlgorithm algorithm1 = new JRKimAlgorithm();
+            DoubleImage watermark1 = algorithm1.KIMextract(initialImage, changedImage, 84, 84);
+            Bitmap bitResult1 = watermark1.ToBitmap(1, 0);
+            bitResult1.Save(qr_extracted);*/
+
+            using (Bitmap imageBitmap = new Bitmap(inPicture))
+            {
+                Console.WriteLine(getDominantColor(imageBitmap));
+            }
+
+            Console.WriteLine("Done");
             Console.ReadKey();
         }
 
@@ -55,6 +70,38 @@ namespace DigitalWatermarking
                 }
                 Console.WriteLine();
             }
+        }
+
+        public static Color getDominantColor(Bitmap bmp)
+        {
+
+            //Used for tally
+            int r = 0;
+            int g = 0;
+            int b = 0;
+
+            int total = 0;
+
+            for (int x = 0; x < bmp.Width; x++)
+            {
+                for (int y = 0; y < bmp.Height; y++)
+                {
+                    Color clr = bmp.GetPixel(x, y);
+
+                    r += clr.R;
+                    g += clr.G;
+                    b += clr.B;
+
+                    total++;
+                }
+            }
+
+            //Calculate average
+            r /= total;
+            g /= total;
+            b /= total;
+
+            return Color.FromArgb(r, g, b);
         }
     }
 }
