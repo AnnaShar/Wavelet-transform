@@ -16,11 +16,11 @@ namespace DigitalWatermarking
         public DoubleImage KIMembed(DoubleImage image, Watermark initialWatermark)
         {
             DoubleImage result = KIMembedComponent(image, initialWatermark, DoubleImage.ColorComponent.Blue);
-            /*if (p< initialWatermark.Length)
+            if (p< initialWatermark.Length)
                 result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Red);
             if (p < initialWatermark.Length)
                 result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Green);
-            p = 0;*/
+            p = 0;
             return result;
         }
 
@@ -118,11 +118,18 @@ namespace DigitalWatermarking
         public DoubleImage KIMextract(DoubleImage initialImage, DoubleImage changedImage, int widthWatermark, int heigthWatermark)
         {
             Watermark watermark = KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Blue);
-            /*if (p < widthWatermark * heigthWatermark)
-                watermark = watermark.Append(KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Red), p);
             if (p < widthWatermark * heigthWatermark)
-                watermark = watermark.Append(KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Green), p);
-            p = 0;*/
+            {
+                int startIndex = p;
+                watermark = watermark.Append(KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Red), startIndex);
+                //watermark = KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Red);
+            }                
+            if (p < widthWatermark * heigthWatermark)
+            {
+                int startIndex = p;
+                watermark = watermark.Append(KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Green), startIndex);
+            }
+            p = 0;
             return watermark.ToDoubleImage(widthWatermark, heigthWatermark);
         }
         private Watermark KIMextractComponent(DoubleImage initialImage, DoubleImage changedImage, int widthWatermark, int heigthWatermark, DoubleImage.ColorComponent colorComponent)
