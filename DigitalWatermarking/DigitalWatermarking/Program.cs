@@ -8,7 +8,7 @@ namespace DigitalWatermarking
     {
         static void Main(string[] args)
         {
-            var keyWord = "roses";
+            var keyWord = "lena";
             var inPicture = keyWord+ ".jpg";
             var changedPicture = keyWord + "_changed.jpg";
             var qr = "QRcode_phone.png";
@@ -16,64 +16,23 @@ namespace DigitalWatermarking
 
 
 
-            Watermark watermark;
-            DoubleImage image;
-            using (Bitmap watermarkBitmap = new Bitmap(qr))
-            {
-                DoubleImage dImage = new DoubleImage(watermarkBitmap);
-                watermark = new Watermark(dImage);
-            }
-
-            using (Bitmap imageBitmap = new Bitmap(inPicture))
-            {
-                image = new DoubleImage(imageBitmap);
-            }
-
-            JRKimAlgorithm algorithm = new JRKimAlgorithm();
-            DoubleImage result = algorithm.KIMembed(image, watermark);
-            Bitmap bitResult = result.ToBitmap(1, 0);
-            bitResult.Save(changedPicture);
 
             DoubleImage initialImage, changedImage;
 
-            using (Bitmap imageBitmap = new Bitmap(inPicture))
+            using (Bitmap imageBitmap = new Bitmap("landscape.jpg")) //lena_changed.jpg
             {
                 initialImage = new DoubleImage(imageBitmap);
             }
 
-            using (Bitmap imageBitmap = new Bitmap(changedPicture))
+            using (Bitmap imageBitmap = new Bitmap("landscape_changed_cr.png"))
             {
                 changedImage = new DoubleImage(imageBitmap);
             }
 
-            JRKimAlgorithm algorithm1 = new JRKimAlgorithm();
-            DoubleImage watermark1 = algorithm1.KIMextract(initialImage, changedImage, 100, 100);
-            Bitmap bitResult1 = watermark1.ToBitmap(1, 0);
-            bitResult1.Save(qr_extracted);
+            DoubleImage full = DoubleImage.FillWithSmallerImage(initialImage, changedImage);
+            Bitmap result = full.ToBitmap(1,0);
+            result.Save("full.jpg");
             
-            using (Bitmap imageBitmap = new Bitmap(inPicture))
-            {
-                Console.WriteLine(getDominantColor(imageBitmap));
-            }
-
-            /*DoubleImage initialImage, white;
-            using (Bitmap imageBitmap = new Bitmap("big_lena.png"))
-            {
-                initialImage = new DoubleImage(imageBitmap);
-            }
-
-            using (Bitmap imageBitmap = new Bitmap("black.jpg"))
-            {
-                white = new DoubleImage(imageBitmap);
-            }
-
-            double[,] blue = initialImage.GetColorComponent(DoubleImage.ColorComponent.Blue);
-
-            blue = Wavelet.Transform(blue, 3);
-            initialImage.UpdateColorComponent(DoubleImage.ColorComponent.Blue, blue);
-            Bitmap bitResult1 = initialImage.ToBitmap(1, 0);
-            bitResult1.Save("lena_wavelet3.jpg");
-            */
 
             Console.WriteLine("Done");
             Console.ReadKey();

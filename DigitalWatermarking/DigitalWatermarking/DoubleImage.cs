@@ -145,28 +145,71 @@ namespace DigitalWatermarking
             return BMImage;
         }
 
-        /*public DoubleImage FillWithSmallerImage(DoubleImage bigImage, DoubleImage smallImage)
+       public static DoubleImage FillWithSmallerImage(DoubleImage bigImage, DoubleImage smallImage)
        {
            if (smallImage.Height > bigImage.Height || smallImage.Width > bigImage.Width)
                return smallImage;
 
-           if (smallImage.Height< bigImage.Height)
-           {
-               int middleHeight = smallImage.Height / 2;
-               for(int i=0; i< bigImage.Height; i++)
-               {
+            double[,] greenSmall = smallImage.GetColorComponent(ColorComponent.Red);
+            double[,] greenBig = bigImage.GetColorComponent(ColorComponent.Red);
+            
+            int jEnd = greenSmall.GetLength(1)-1;
+            int iEnd = greenSmall.GetLength(0)-1;
+            int countOfChecking = Math.Min(smallImage.Height, smallImage.Width)/2;
 
-               }
-           }
-           DoubleImage biggerImage = new DoubleImage(width, height);
-           for (int i=0; i<height; i++)
-           {
-               for(int j=0; j<width; j++)
-               {
-                   biggerImage._pixels[i, j] = new DoublePixel(image._pixels[i, j]);
-               }
-           }
-           return biggerImage;
-       }*/
+            int iStart = 0;
+            int jStart = 0;
+
+            bool isFound = false;
+
+            for (int i = bigImage.Height-1; i >=0; i--)
+            {
+                if (isFound)
+                    break;
+                for (int j= bigImage.Width-1; j>=0; j--)
+                {
+                    if (greenBig[i,j]==greenSmall[iEnd, jEnd])
+                    {
+                        isFound = true;
+                        for (int k=1; k< countOfChecking; k++)
+                        {
+                            if (greenBig[i - k, j - k] != greenSmall[iEnd - k, jEnd - k])
+                            {
+                                isFound = false;
+                                break;
+                            }
+                        }
+                        if (isFound)
+                        {
+                            iStart = i - smallImage.Height;
+                            jStart = j - smallImage.Width;
+                            Console.WriteLine("iStart {0}", iStart);
+                            Console.WriteLine("jStart {0}", jStart);
+                            Console.WriteLine("iEnd {0}", iEnd);
+                            Console.WriteLine("jEnd {0}", jEnd);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            DoubleImage updateSmallImage = new DoubleImage(bigImage.Width, bigImage.Height);
+            
+
+            for (int i=0; i< bigImage.Width; i++)
+            {
+                for (int j=0; j< bigImage.Height; j++)
+                {
+                    if (iStart <= i && i <= iStart + iEnd && jStart <= j && j <= jStart + jEnd)
+                    {
+                        DoublePixel pixel = smallImage.GetPixel(i - iStart, j - jStart);
+                        updateSmallImage.SetPixel(i, j, pixel.Red, pixel.Green, pixel.Blue);
+                    }
+                    else updateSmallImage.SetPixel(i, j, 255, 255, 255);
+                }
+            }
+
+            return updateSmallImage;
+       }
     }
 }
