@@ -38,13 +38,6 @@ namespace DigitalWatermarking
             Blue = new_blue;
         }
 
-        public void Negative()
-        {
-            Red = -Red;
-            Green = -Green;
-            Blue = -Blue;
-        }
-
         public Color ToNormalColor()
         {
             int normalRed = (int)Red, normal_green = (int)Green, normal_blue = (int)Blue;

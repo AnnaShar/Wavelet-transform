@@ -38,17 +38,6 @@ namespace DigitalWatermarking
             }
         }
 
-        /*private string print(int[] array)
-        {
-            var stroka = "[";
-            for(int i=0; i<array.Length-1; i++)
-            {
-                stroka += array[i] + ", ";
-            }
-            stroka += array[array.Length - 1] + "]";
-            return stroka;
-        }*/
-
         public Watermark Append(Watermark addWatermark, int p)
         {
             Watermark newWatermark = this;
@@ -58,52 +47,6 @@ namespace DigitalWatermarking
             }
             return newWatermark;
         }
-       
-        /*public Watermark Append(Watermark addWatermark, int p)
-        {
-            Watermark newWatermark = new Watermark(this.Length + addWatermark.Length);
-            for (int i=0; i<this.Length; i++)
-            {
-                newWatermark[i] = this[i];
-            }
-
-            for (int i=0; i<addWatermark.Length; i++)
-            {
-                newWatermark[this.Length + 1] = addWatermark[i];
-            }
-            return newWatermark;
-        }*/
-
-        /*public DoubleImage ToDoubleImage(int width, int height)
-        {
-            DoubleImage image = new DoubleImage(width, height);
-            for (int i = 0; i < image.Height; i++)
-            {
-                for (int j = 0; j < image.Width; j++)
-                {
-                    int index = i * image.Width + j;
-                    
-                    //black
-                    if (this[index] == 0)
-                    {
-                        if (index >= 930)
-                            image.SetPixel(i, j, 0, 0, 255);
-                        else
-                            image.SetPixel(i, j, 0, 0, 0);
-                    }
-                        
-
-                    //white
-                    if (this[index] == 1)
-                        if (index >= 930)
-                            image.SetPixel(i, j, 255, 0, 255);
-                        else
-                            image.SetPixel(i, j, 255, 255, 255);
-
-                }
-            }
-            return image;
-        }*/
 
         public DoubleImage ToDoubleImage(int width, int height)
         {
@@ -128,6 +71,22 @@ namespace DigitalWatermarking
                 }
             }
             return image;
+        }
+        public override string ToString()
+        {
+            return string.Join("", _bits);
+        }
+
+        public int CompareBitToBit(Watermark watermark)
+        {
+            int equalBits = 0;
+            int comparisonLength = Math.Min(this.Length, watermark.Length);
+            for (int i = 0; i < comparisonLength; i++)
+            {
+                if (watermark._bits[i] == this._bits[i])
+                    equalBits++;
+            }
+            return equalBits;
         }
     }
 }

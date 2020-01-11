@@ -51,6 +51,17 @@ namespace DigitalWatermarking
         {
             _pixels[i, j].SetColor(r, g, b);
         }
+        public DoubleImage Copy()
+        {
+            DoubleImage copy = new DoubleImage(Width, Height);
+            for (int i = 0; i < Height; i++)
+                for (int j = 0; j < Width; j++)
+                {
+                    DoublePixel pixel = this._pixels[i, j];
+                    copy._pixels[i, j] = new DoublePixel(pixel.Red, pixel.Green, pixel.Blue);
+                }
+            return copy;
+        }
 
         public double[,] GetColorComponent(ColorComponent component) 
         {
@@ -134,5 +145,28 @@ namespace DigitalWatermarking
             return BMImage;
         }
 
+        /*public DoubleImage FillWithSmallerImage(DoubleImage bigImage, DoubleImage smallImage)
+       {
+           if (smallImage.Height > bigImage.Height || smallImage.Width > bigImage.Width)
+               return smallImage;
+
+           if (smallImage.Height< bigImage.Height)
+           {
+               int middleHeight = smallImage.Height / 2;
+               for(int i=0; i< bigImage.Height; i++)
+               {
+
+               }
+           }
+           DoubleImage biggerImage = new DoubleImage(width, height);
+           for (int i=0; i<height; i++)
+           {
+               for(int j=0; j<width; j++)
+               {
+                   biggerImage._pixels[i, j] = new DoublePixel(image._pixels[i, j]);
+               }
+           }
+           return biggerImage;
+       }*/
     }
 }

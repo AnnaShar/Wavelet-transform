@@ -13,10 +13,34 @@ namespace DigitalWatermarking
         //private DoubleImage.ColorComponent mainColorComponent = DoubleImage.ColorComponent.Red;
         private int p = 0;
 
+        public int GetMaxWatermarkLength(DoubleImage image)
+        {
+            Watermark watermark = new Watermark(image.Height * image.Width);
+            KIMembedComponent(image, watermark, DoubleImage.ColorComponent.Blue);
+            KIMembedComponent(image, watermark, DoubleImage.ColorComponent.Red);
+            KIMembedComponent(image, watermark, DoubleImage.ColorComponent.Green);
+            int maxWatermarkLength = p;
+            p = 0;
+            return maxWatermarkLength;
+        }
+        public int GetOptimalWatermarkLength(DoubleImage image)
+        {
+            Watermark watermark = new Watermark(image.Height * image.Width);
+            KIMembedComponent(image, watermark, DoubleImage.ColorComponent.Blue);
+            int result = p;
+            p = 0;
+            return result;
+        }
+
         public DoubleImage KIMembed(DoubleImage image, Watermark initialWatermark)
         {
+            DoubleImage copy = image.Copy();
+            int maxWatermarkLength = GetOptimalWatermarkLength(copy);
+            if (maxWatermarkLength < initialWatermark.Length)
+                throw new Exception("Watermark length is too big to embed it in the image.");
+
             DoubleImage result = KIMembedComponent(image, initialWatermark, DoubleImage.ColorComponent.Blue);
-            if (p< initialWatermark.Length)
+            if (p < initialWatermark.Length)
                 result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Red);
             if (p < initialWatermark.Length)
                 result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Green);

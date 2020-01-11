@@ -51,13 +51,5 @@ namespace DigitalWatermarking
             return max;
         }
 
-        private static double MinArray(double[] array)
-        {
-            double max = array[0];
-            for (int i = 0; i < array.Length; i++)
-                if (array[i] < max)
-                    max = array[i];
-            return max;
-        }
     }
 }
