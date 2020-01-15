@@ -8,7 +8,7 @@ namespace DigitalWatermarking
     {
         static void Main(string[] args)
         {
-            var keyWord = "lena";
+            var keyWord = "cat";
             var inPicture = keyWord+ ".jpg";
             var changedPicture = keyWord + "_changed.jpg";
             var qr = "QRcode_phone.png";
@@ -19,19 +19,20 @@ namespace DigitalWatermarking
 
             DoubleImage initialImage, changedImage;
 
-            using (Bitmap imageBitmap = new Bitmap("landscape.jpg")) //lena_changed.jpg
+            using (Bitmap imageBitmap = new Bitmap(inPicture)) //lena_changed.jpg
             {
                 initialImage = new DoubleImage(imageBitmap);
             }
 
-            using (Bitmap imageBitmap = new Bitmap("landscape_changed_cr.png"))
+            using (Bitmap imageBitmap = new Bitmap(changedPicture))
             {
                 changedImage = new DoubleImage(imageBitmap);
             }
 
-            DoubleImage full = DoubleImage.FillWithSmallerImage(initialImage, changedImage);
-            Bitmap result = full.ToBitmap(1,0);
-            result.Save("full.jpg");
+            JRKimAlgorithm algorithm = new JRKimAlgorithm();
+            DoubleImage watermark = algorithm.KIMextract(initialImage, changedImage, 100, 100);
+            Bitmap result = watermark.ToBitmap(1,0);
+            result.Save(qr_extracted);
             
 
             Console.WriteLine("Done");

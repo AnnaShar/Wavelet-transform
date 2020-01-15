@@ -21,18 +21,21 @@ namespace DigitalWatermarkingUser
 
         private DoubleImage initial_Extract;
         private DoubleImage changed_Extract;
-        private Watermark watermark_Extract;
+        private DoubleImage watermark_Extract;
 
         private Watermark watermark1_Compare;
         private Watermark watermark2_Compare;
         private JRKimAlgorithm algorithm;
+        private int sizeWatermark;
 
         public Form1()
         {
             InitializeComponent();
             algorithm = new JRKimAlgorithm();
+            sizeWatermark = 100;
         }
 
+        #region Form actions
         private void btn_Embed_main_Click(object sender, EventArgs e)
         {
             panel_Embed.Visible = true;
@@ -50,7 +53,7 @@ namespace DigitalWatermarkingUser
 
         private void btn_Menu2_Click(object sender, EventArgs e)
         {
-            panel_Embed.Visible = false;
+            panel_Extract.Visible = false;
         }
 
         private void btn_Menu3_Click(object sender, EventArgs e)
@@ -62,12 +65,13 @@ namespace DigitalWatermarkingUser
         {
             panel_Compare.Visible = true;
         }
+#endregion
 
         #region Embed 
         private void btn_LoadInit_Embed_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "jpg files (*.jpg)|png files (*.png)|All files (*.*)|*.*";
+            openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
             
@@ -78,13 +82,14 @@ namespace DigitalWatermarkingUser
             }
             btn_KnowSizeWM_Embed.Enabled = true;
             btn_OptimalSizeWM_Embed.Enabled = true;
-            txt_Status_Embed.Text = "Изображение загружено. Вы можете проверить максимальный и оптимальный размеры ЦВЗ.";
+            //txt_Status_Embed.Text = "Изображение загружено. Вы можете проверить максимальный и оптимальный размеры ЦВЗ.";
+            lbl_loadInit_Embed.Text = "Изображение загружено. Вы можете проверить максимальный и оптимальный размеры ЦВЗ.";
         }
 
         private void btn_LoadWM_Embed_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            //openFileDialog1.Filter = "jpg files (*.jpg)|png files (*.png)|All files (*.*)|*.*";
+            openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
 
@@ -147,5 +152,118 @@ namespace DigitalWatermarkingUser
             txt_Status_Embed.Text = String.Format("Оптимальный размер ЦВЗ {0}x{0} пикселей.", sideLength);
         }
         #endregion
+
+        #region Extract
+        private void btn_loadInit_Extract_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = openFileDialog1.FileName;
+            using (Bitmap imageBitmap = new Bitmap(filename))
+            {
+                initial_Extract = new DoubleImage(imageBitmap);
+            }
+            btn_loadChanged_Extract.Enabled = true;
+            txt_status_Extract.Text = "Исходное изображение загружено. Теперь загрузите изображение, содержащее ЦВЗ.";
+        }
+
+        private void btn_loadChanged_Extract_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter ="jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = openFileDialog1.FileName;
+            using (Bitmap imageBitmap = new Bitmap(filename))
+            {
+                changed_Extract = new DoubleImage(imageBitmap);
+            }
+            btn_exctract.Enabled = true;
+            txt_status_Extract.Text = "Изображение, содержащее ЦВЗ, загружено. Теперь вы можете извлечь ЦВЗ.";
+        }
+
+        private void btn_exctract_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                watermark_Extract = algorithm.KIMextract(initial_Extract, changed_Extract, sizeWatermark, sizeWatermark);
+                txt_status_Extract.Text = "ЦВЗ был успешно извлечен. Для просмотра его необходимо сохранить.";
+                btn_save_Extract.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                txt_status_Extract.Text = ex.Message;
+            }
+        }
+        private void btn_save_Extract_Click(object sender, EventArgs e)
+        {
+            Bitmap bitResult = watermark_Extract.ToBitmap(1, 0);
+
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|All files (*.*)|*.*";
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = saveFileDialog1.FileName;
+            string path = Path.GetFullPath(saveFileDialog1.FileName);
+            bitResult.Save(filename);
+            txt_status_Extract.Text = "ЦВЗ сохранен. Вы можете его посмотреть по адресу " + path + ".";
+        }
+        #endregion
+
+
+
+        private void btn_loadWM1_Compare_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = openFileDialog1.FileName;
+            using (Bitmap imageBitmap = new Bitmap(filename))
+            {
+                DoubleImage dImage = new DoubleImage(imageBitmap);
+                watermark1_Compare = new Watermark(dImage);
+            }
+            btn_loadWM2_Compare.Enabled = true;
+            txt_Compare.Text = "Первый ЦВЗ загружен.";
+        }
+
+        private void btn_loadWM2_Compare_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = openFileDialog1.FileName;
+            using (Bitmap imageBitmap = new Bitmap(filename))
+            {
+                DoubleImage dImage = new DoubleImage(imageBitmap);
+                watermark2_Compare = new Watermark(dImage);
+            }
+            btn_Compare.Enabled = true;
+            txt_Compare.Text = "Второй ЦВЗ загружен.";
+        }
+
+        private void btn_Compare_Click(object sender, EventArgs e)
+        {
+            //добавить код из нотпада на домашнем ноуте
+        }
+
+        private void btn_restart_Embed_Click(object sender, EventArgs e)
+        {
+            btn_Embed.Enabled = false;
+            btn_KnowSizeWM_Embed.Enabled = false;
+            btn_LoadWM_Embed.Enabled = false;
+            btn_OptimalSizeWM_Embed.Enabled = false;
+            btn_Save_Embed.Enabled = false;
+            txt_Status_Embed.Text = "";
+        }
     }
 }
