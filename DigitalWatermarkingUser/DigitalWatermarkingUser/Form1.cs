@@ -33,48 +33,9 @@ namespace DigitalWatermarkingUser
             InitializeComponent();
             algorithm = new JRKimAlgorithm();
             sizeWatermark = 100;
-            pnl_Main.Show();
 
         }
 
-        #region Form actions
-        private void btn_Embed_main_Click(object sender, EventArgs e)
-        {
-            panel_Embed.Visible = true;
-            pnl_Main.Visible = false;
-        }
-
-        private void btn_Extract_main_Click(object sender, EventArgs e)
-        {
-            panel_Extract.Visible = true;
-            pnl_Main.Visible = false;
-        }
-
-        private void btn_Menu_Click(object sender, EventArgs e)
-        {
-            panel_Embed.Visible = false;
-            pnl_Main.Visible = true;
-
-        }
-
-        private void btn_Menu2_Click(object sender, EventArgs e)
-        {
-            panel_Extract.Visible = false;
-            pnl_Main.Visible = true;
-        }
-
-        private void btn_Menu3_Click(object sender, EventArgs e)
-        {
-            panel_Compare.Visible = false;
-            pnl_Main.Visible = true;
-        }
-
-        private void btn_Compare_main_Click(object sender, EventArgs e)
-        {
-            panel_Compare.Visible = true;
-            pnl_Main.Visible = false;
-        }
-#endregion
 
         #region Embed 
         private void btn_LoadInit_Embed_Click(object sender, EventArgs e)
@@ -262,7 +223,13 @@ namespace DigitalWatermarkingUser
 
         private void btn_Compare_Click(object sender, EventArgs e)
         {
-            //добавить код из нотпада на домашнем ноуте
+            int equals = watermark1_Compare.CompareBitToBit(watermark2_Compare);
+            int size = sizeWatermark * sizeWatermark;
+            int percent1 = equals / size * 100;
+
+            int substring = Utils.LongestCommonSubstring(watermark1_Compare.ToString(), watermark2_Compare.ToString()).Length;
+            int percent2 = substring / size * 100;
+            txt_Compare.Text = "Процент совпадения побитового сравнения равен " + percent1 + " процентам.\r\n Наибольшее вхождение ЦВЗ равно " + percent2 + " процентов.";
         }
 
         private void btn_restart_Embed_Click(object sender, EventArgs e)
@@ -286,6 +253,49 @@ namespace DigitalWatermarkingUser
 
         }
 
+        private void btn_loadWM1_Compare_Click_1(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
 
+            string filename = openFileDialog1.FileName;
+            using (Bitmap imageBitmap = new Bitmap(filename))
+            {
+                DoubleImage dImage = new DoubleImage(imageBitmap);
+                watermark1_Compare = new Watermark(dImage);
+            }
+            btn_loadWM2_Compare.Enabled = true;
+            txt_Compare.Text = "Первый ЦВЗ загружен.";
+        }
+
+        private void btn_loadWM2_Compare_Click_1(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg|png files (*.png)|*.png|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = openFileDialog1.FileName;
+            using (Bitmap imageBitmap = new Bitmap(filename))
+            {
+                DoubleImage dImage = new DoubleImage(imageBitmap);
+                watermark2_Compare = new Watermark(dImage);
+            }
+            btn_Compare.Enabled = true;
+            txt_Compare.Text = "Второй ЦВЗ загружен.";
+        }
+
+        private void btn_Compare_Click_1(object sender, EventArgs e)
+        {
+            int equals = watermark1_Compare.CompareBitToBit(watermark2_Compare);
+            int size = sizeWatermark * sizeWatermark;
+            double percent1 = equals / size * 100;
+
+            int substring = Utils.LongestCommonSubstring(watermark1_Compare.ToString(), watermark2_Compare.ToString()).Length;
+            double percent2 = substring / size * 100;
+            txt_Compare.Text = "Процент совпадения побитового сравнения равен " + percent1 + " процентам.\r\nНаибольшее вхождение ЦВЗ равно " + percent2 + " процентов.";
+        }
     }
 }

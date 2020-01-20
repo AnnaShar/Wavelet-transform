@@ -31,8 +31,14 @@ namespace DigitalWatermarking
             p = 0;
             return result;
         }
-
         public DoubleImage KIMembed(DoubleImage image, Watermark initialWatermark)
+        {
+
+            DoubleImage result = KIMembedComponent(image, initialWatermark, DoubleImage.ColorComponent.Green);
+            return result;
+        }
+
+        /*public DoubleImage KIMembed(DoubleImage image, Watermark initialWatermark)
         {
             DoubleImage copy = image.Copy();
             int maxWatermarkLength = GetOptimalWatermarkLength(copy);
@@ -46,7 +52,7 @@ namespace DigitalWatermarking
                 result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Green);
             p = 0;
             return result;
-        }
+        }*/
 
         private DoubleImage KIMembedComponent(DoubleImage image, Watermark initialWatermark, DoubleImage.ColorComponent colorComponent)
         { 

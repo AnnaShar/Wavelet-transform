@@ -33,11 +33,11 @@ namespace DigitalWatermarking
 
         public DoubleImage KIMembed(DoubleImage image, Watermark initialWatermark)
         {
-            /*DoubleImage copy = image.Copy();
-            int maxWatermarkLength = GetOptimalWatermarkLength(copy);
+            DoubleImage copy = image.Copy();
+            int maxWatermarkLength = GetMaxWatermarkLength(copy);
             if (maxWatermarkLength < initialWatermark.Length)
-                throw new Exception("Watermark length is too big to embed it in the image.");
-                */
+                throw new Exception("Размер ЦВЗ слишком большой для данного изображения. Проверьте, максимально возможный размер ЦВЗ.");
+                
             DoubleImage result = KIMembedComponent(image, initialWatermark, DoubleImage.ColorComponent.Blue);
             if (p < initialWatermark.Length)
                 result = KIMembedComponent(result, initialWatermark, DoubleImage.ColorComponent.Red);

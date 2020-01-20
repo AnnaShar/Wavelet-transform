@@ -8,8 +8,8 @@ namespace DigitalWatermarking
     {
         static void Main(string[] args)
         {
-            var keyWord = "cat";
-            var inPicture = keyWord+ ".jpg";
+            var keyWord = "roses";
+            var inPicture = keyWord + ".jpg";
             var changedPicture = keyWord + "_changed.jpg";
             var qr = "QRcode_phone.png";
             var qr_extracted = keyWord + "_QR.jpg";
@@ -20,16 +20,34 @@ namespace DigitalWatermarking
             {
                 image = new DoubleImage(imageBM);
             }
+            /*Watermark watermark;
+            using (Bitmap imageBM = new Bitmap(qr)) //lena_changed.jpg
+            {
+                DoubleImage imageTemp = new DoubleImage(imageBM);
+                watermark = new Watermark(imageTemp);
+            }
+
+            JRKimAlgorithm algorithm = new JRKimAlgorithm();
+            DoubleImage changed = algorithm.KIMembed(image, watermark);
+            Bitmap result = changed.ToBitmap(1, 0);
+            result.Save(changedPicture); */
 
             DoubleImage black;
-            using (Bitmap imageBM = new Bitmap("black.jpg")) //lena_changed.jpg
+            using (Bitmap imageBM = new Bitmap("black_cr.jpg")) //lena_changed.jpg
             {
                 black = new DoubleImage(imageBM);
             }
             double[,] blue = image.GetColorComponent(DoubleImage.ColorComponent.Blue);
-            black.UpdateColorComponent(DoubleImage.ColorComponent.Blue, blue);
+            double[,] red = image.GetColorComponent(DoubleImage.ColorComponent.Red);
+            double[,] green = image.GetColorComponent(DoubleImage.ColorComponent.Green);
+            /*double[,] changed_blue = Wavelet.Transform(blue, 1);
+            double[,] changed_green = Wavelet.Transform(green, 1);
+            double[,] changed_red = Wavelet.Transform(red, 1);*/
+            //black.UpdateColorComponent(DoubleImage.ColorComponent.Red, red);
+            black.UpdateColorComponent(DoubleImage.ColorComponent.Red, red);
+           // black.UpdateColorComponent(DoubleImage.ColorComponent.Green, green);
             Bitmap result = black.ToBitmap(1, 0);
-            result.Save("cat_blue.jpg");
+            result.Save("roses_red.jpg");
 
             /*DoubleImage initialImage, changedImage;
 
