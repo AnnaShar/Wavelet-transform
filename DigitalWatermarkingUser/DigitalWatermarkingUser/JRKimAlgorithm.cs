@@ -10,7 +10,6 @@ namespace DigitalWatermarking
         private double coef3Level = 0.1;
         private double coef2Level = 0.2;
         private double coef1Level = 0.4;
-        //private DoubleImage.ColorComponent mainColorComponent = DoubleImage.ColorComponent.Red;
         private int p = 0;
 
         public int GetMaxWatermarkLength(DoubleImage image)
@@ -92,8 +91,6 @@ namespace DigitalWatermarking
             p = EmbedInCoef(coef1Level, ref detailVert1, threshold1, watermark, p);
             p = EmbedInCoef(coef1Level, ref detailDiag1, threshold1, watermark, p);
 
-            Console.WriteLine("watermark length {0}", watermark.Length);
-            Console.WriteLine("p {0}", p);
 
             // Restore blue component from coefficients
             double[,] componentWithWatermark = new double[blueComponent.GetLength(0), blueComponent.GetLength(1)];
@@ -146,7 +143,6 @@ namespace DigitalWatermarking
             {
                 int startIndex = p;
                 watermark = watermark.Append(KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Red), startIndex);
-                //watermark = KIMextractComponent(initialImage, changedImage, widthWatermark, heigthWatermark, DoubleImage.ColorComponent.Red);
             }                
             if (p < widthWatermark * heigthWatermark)
             {
@@ -224,8 +220,6 @@ namespace DigitalWatermarking
 
             watermark = UnTransformWatermark(watermark);
             return watermark;
-            //DoubleImage watermarkImage = watermark.ToDoubleImage(widthWatermark, heigthWatermark);
-            //return watermarkImage;
         }
 
         private int ExtractFromCoef(double constCoefficient, double[,] initialCoefficients, double[,] changedCoefficients, double treshold, int p, int watermarkSize, ref Watermark watermark)

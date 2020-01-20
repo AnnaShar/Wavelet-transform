@@ -33,37 +33,46 @@ namespace DigitalWatermarkingUser
             InitializeComponent();
             algorithm = new JRKimAlgorithm();
             sizeWatermark = 100;
+            pnl_Main.Show();
+
         }
 
         #region Form actions
         private void btn_Embed_main_Click(object sender, EventArgs e)
         {
             panel_Embed.Visible = true;
+            pnl_Main.Visible = false;
         }
 
         private void btn_Extract_main_Click(object sender, EventArgs e)
         {
             panel_Extract.Visible = true;
+            pnl_Main.Visible = false;
         }
 
         private void btn_Menu_Click(object sender, EventArgs e)
         {
             panel_Embed.Visible = false;
+            pnl_Main.Visible = true;
+
         }
 
         private void btn_Menu2_Click(object sender, EventArgs e)
         {
             panel_Extract.Visible = false;
+            pnl_Main.Visible = true;
         }
 
         private void btn_Menu3_Click(object sender, EventArgs e)
         {
             panel_Compare.Visible = false;
+            pnl_Main.Visible = true;
         }
 
         private void btn_Compare_main_Click(object sender, EventArgs e)
         {
             panel_Compare.Visible = true;
+            pnl_Main.Visible = false;
         }
 #endregion
 
@@ -80,10 +89,10 @@ namespace DigitalWatermarkingUser
             {
                 initial_Embed = new DoubleImage(imageBitmap);
             }
+            btn_LoadWM_Embed.Enabled = true;
             btn_KnowSizeWM_Embed.Enabled = true;
             btn_OptimalSizeWM_Embed.Enabled = true;
-            //txt_Status_Embed.Text = "Изображение загружено. Вы можете проверить максимальный и оптимальный размеры ЦВЗ.";
-            lbl_loadInit_Embed.Text = "Изображение загружено. Вы можете проверить максимальный и оптимальный размеры ЦВЗ.";
+            txt_Status_Embed.Text = "Изображение загружено. Вы можете проверить максимальный и оптимальный размеры ЦВЗ.";
         }
 
         private void btn_LoadWM_Embed_Click(object sender, EventArgs e)
@@ -265,5 +274,18 @@ namespace DigitalWatermarkingUser
             btn_Save_Embed.Enabled = false;
             txt_Status_Embed.Text = "";
         }
+
+        private void btn_restart_Extract_Click(object sender, EventArgs e)
+        {
+            btn_loadChanged_Extract.Enabled = false;
+            btn_exctract.Enabled = false;
+        }
+
+        private void btn_restart_Compare_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
     }
 }

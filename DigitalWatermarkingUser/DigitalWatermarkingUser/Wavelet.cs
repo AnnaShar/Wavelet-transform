@@ -98,37 +98,27 @@ namespace DigitalWatermarking
             {
                 case Coefficients.Approximation:
                     range.Width.StartIndex = 0;
-                    //range.Width.EndIndex = width / decompositionCoef;
                     range.Height.StartIndex = 0;
-                    //range.Height.EndIndex = height / decompositionCoef;
                     break;
 
                 case Coefficients.Horizontal:
                     range.Width.StartIndex = width / decompositionCoef;
-                    //range.Width.EndIndex = 2 * width / decompositionCoef;
                     range.Height.StartIndex = 0;
-                    //range.Height.EndIndex = height / decompositionCoef;
                     break;
 
                 case Coefficients.Vertical:
                     range.Width.StartIndex = 0;
-                    //range.Width.EndIndex = width / decompositionCoef;
                     range.Height.StartIndex = height / decompositionCoef;
-                    //range.Height.EndIndex = 2 * height / decompositionCoef;
                     break;
 
                 case Coefficients.Diagonal:
                     range.Width.StartIndex = width / decompositionCoef;
-                    //range.Width.EndIndex = 2 * width / decompositionCoef;
                     range.Height.StartIndex = height / decompositionCoef;
-                    //range.Height.EndIndex = 2 * height / decompositionCoef;
                     break;
 
                 default:
                     range.Width.StartIndex = 0;
-                    //range.Width.EndIndex = width;
                     range.Height.StartIndex = 0;
-                    //range.Height.EndIndex = height;
                     break;
             }
 
@@ -139,7 +129,7 @@ namespace DigitalWatermarking
         {
             int decompositionCoef = Convert.ToInt32(Math.Pow(2, decompositionLevel));
             if (width % decompositionCoef != 0 || height % decompositionCoef != 0)
-                throw new Exception("Width and height should be divided by 2^decompositionLevel.");
+                throw new Exception("Ширина и высота должны делиться на 2 степени номера уровня разложения.");
 
         }
 

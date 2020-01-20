@@ -15,9 +15,23 @@ namespace DigitalWatermarking
             var qr_extracted = keyWord + "_QR.jpg";
 
 
+            DoubleImage image;
+            using (Bitmap imageBM = new Bitmap(inPicture)) //lena_changed.jpg
+            {
+                image = new DoubleImage(imageBM);
+            }
 
+            DoubleImage black;
+            using (Bitmap imageBM = new Bitmap("black.jpg")) //lena_changed.jpg
+            {
+                black = new DoubleImage(imageBM);
+            }
+            double[,] blue = image.GetColorComponent(DoubleImage.ColorComponent.Blue);
+            black.UpdateColorComponent(DoubleImage.ColorComponent.Blue, blue);
+            Bitmap result = black.ToBitmap(1, 0);
+            result.Save("cat_blue.jpg");
 
-            DoubleImage initialImage, changedImage;
+            /*DoubleImage initialImage, changedImage;
 
             using (Bitmap imageBitmap = new Bitmap(inPicture)) //lena_changed.jpg
             {
@@ -32,8 +46,8 @@ namespace DigitalWatermarking
             JRKimAlgorithm algorithm = new JRKimAlgorithm();
             DoubleImage watermark = algorithm.KIMextract(initialImage, changedImage, 100, 100);
             Bitmap result = watermark.ToBitmap(1,0);
-            result.Save(qr_extracted);
-            
+            result.Save(qr_extracted);*/
+
 
             Console.WriteLine("Done");
             Console.ReadKey();
